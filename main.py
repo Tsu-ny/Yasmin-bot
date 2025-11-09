@@ -1,8 +1,7 @@
 import discord
-from discord.ext import commands
 from dotenv import load_dotenv
 import os
-from Classes.MyBot import MyBot
+from config.bot import MyBot
 
 def main():
     # Importa as info do .env
@@ -14,11 +13,11 @@ def main():
     # Configuração básica
     intents = discord.Intents.default()
     intents.message_content = True  # Necessário para ler mensagens
+    intents.members = True  # Necessário para eventos relacionados a membros
 
     bot = MyBot(command_prefix='.', intents=intents)
 
-    # Substitua pelo seu token real
-    bot.run(TOKEN)
+    bot.run(str(TOKEN))
 
 if __name__ == "__main__":
     main()
