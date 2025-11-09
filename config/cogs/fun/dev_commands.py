@@ -4,8 +4,8 @@ import random
 from dotenv import load_dotenv
 import os
 
+
 load_dotenv()
-dev = os.getenv("ID_DEV")
 
 class DevCommands(commands.Cog):
     """Comandos exclusivos para o dev"""
@@ -14,7 +14,8 @@ class DevCommands(commands.Cog):
         self.bot = bot
         self._emoji = []
         # Seu ID do Discord aqui
-        self.dev_id = dev  # Este é o ID que vi sendo usado no bot.py
+        self.dev_id = int(os.getenv("ID_DEV", "0")) # Este é o ID que vi sendo usado no bot.py
+        # self.dev_id = 572812140143181825 # Este é o ID que vi sendo usado no bot.py
     
     def cog_check(self, ctx):
         """Verifica se quem chamou o comando é o dev"""
@@ -65,7 +66,8 @@ class DevCommands(commands.Cog):
     async def dm(self, ctx, user: discord.User, *, mensagem: str):
         """[DEV] Envia DM para um usuário mencionado"""
         try:
-            await user.send(mensagem + self.emoji)
+            await user.send(mensagem)
+            # await user.message.delete()
             await ctx.send(f"Enviei uma DM para {user.mention}", delete_after=6)
         except discord.Forbidden:
             await ctx.send(f"Não consegui enviar DM para {user.mention}. Talvez esteja com DMs fechadas.", delete_after=8)

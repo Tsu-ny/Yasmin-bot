@@ -1,13 +1,12 @@
 import discord
 from discord.ext import commands
 from typing import List
-from config.cogs import CogManager
+from config.cog import CogManager
 
 class MyBot(commands.Bot):
     def __init__(self, command_prefix, intents):
         super().__init__(command_prefix=command_prefix, intents=intents)
-        # Cria o gerenciador de Cogs
-        self.cog_manager = CogManager(self, cog_folder='cogs')
+        self.cog_manager = CogManager(self)
 
     async def on_ready(self):
         print(f'Bot online como {self.user}')
@@ -26,7 +25,7 @@ class MyBot(commands.Bot):
 
     async def setup_hook(self):
         """Carrega todos os Cogs quando o bot inicia"""
-        loaded_cogs = self.cog_manager.load_all()
+        loaded_cogs = await self.cog_manager.load_all()
         print(f"Cogs carregados: {', '.join(loaded_cogs) if loaded_cogs else 'Nenhum'}")
 
     async def reload_all_cogs(self) -> List[str]:

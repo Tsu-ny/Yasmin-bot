@@ -1,32 +1,37 @@
 import os
 from discord.ext import commands
+from pathlib import Path
 
 class CogManager:
     """Classe para gerenciar todos os Cogs do bot."""
 
-    def __init__(self, bot, cog_folder='cogs'):
+    def __init__(self, bot, cog_folder=None):
         self.bot = bot
-        # Caminho absoluto da pasta de Cogs
-        self.cog_folder = os.path.join(os.path.dirname(__file__), cog_folder)
+        # Caminho dos Cogs
+        if cog_folder is None:
+            self.cog_folder = Path(__file__).parent / "cogs"
+        else:
+            self.cog_folder = Path(cog_folder).resolve()
         # Lista de módulos carregados
         self.loaded_cogs = []
-
+  
     def discover_cogs(self):
         """Retorna uma lista de todos os módulos de Cogs encontrados recursivamente."""
         cogs = []
-        for root, dirs, files in os.walk(self.cog_folder):
-            for file in files:
-                if file.endswith('.py') and not file.startswith('__'):
-                    relative_path = os.path.relpath(os.path.join(root, file), start=os.path.dirname(__file__))
-                    module = relative_path.replace(os.sep, ".").replace(".py", "")
-                    cogs.append(module)
+        for file_path in self.cog_folder.rglob("*.py"):
+            if not file_path.name.startswith("__"):
+                # módulo no formato config.cogs.subfolder.more_commands
+                # converte caminho em módulo Python
+                relative_path = file_path.relative_to(Path(__file__).parent.parent)
+                module = ".".join(relative_path.with_suffix("").parts)
+                cogs.append(module)
         return cogs
 
-    def load_all(self):
+    async def load_all(self):
         """Carrega todos os Cogs encontrados."""
         for cog in self.discover_cogs():
             try:
-                self.bot.load_extension(cog)
+                await self.bot.load_extension(cog)
                 self.loaded_cogs.append(cog)
                 print(f"Cog carregado: {cog}")
             except commands.ExtensionAlreadyLoaded:

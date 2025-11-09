@@ -12,7 +12,7 @@ class ChatCommands(commands.Cog):
     @property
     def emoji(self):
         '''Returns a emoji that avoids immediate repetition.'''
-        emoji = ['UwU', 'OwO', 'TwT', ':3', '>W<', 'nwn', '^-^', '>-<']
+        emoji = ['UwU', 'OwO', 'TwT', ':3', '>W<', '^-^', '>-<']
         options = [e for e in emoji if not self._emoji]
         
         if not options:
